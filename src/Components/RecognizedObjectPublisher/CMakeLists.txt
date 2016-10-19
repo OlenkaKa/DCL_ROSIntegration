@@ -27,8 +27,14 @@ function(USE_ROS)
     set(ROS_LIBRARIES ${ROS_LIBRARIES} ${INT_ROS_LIBRARIES} PARENT_SCOPE)
 endfunction()
 
-USE_ROS(roscpp std_msgs tf geometry_msgs tf_conversions object_recognition_msgs eigen_conversions)
+USE_ROS(object_recognition_msgs roscpp std_msgs tf geometry_msgs tf_conversions object_recognition_msgs eigen_conversions)
 
+find_package(catkin REQUIRED COMPONENTS
+        roscpp
+        object_recognition_msgs
+        tf
+        )
+include_directories(${catkin_INCLUDE_DIRS})
 # Create a variable containing all .cpp files:
 FILE(GLOB files *.cpp)
 
@@ -41,6 +47,6 @@ ADD_LIBRARY(RecognizedObjectPublisher SHARED ${files})
 
 # Link external libraries
 TARGET_LINK_LIBRARIES(RecognizedObjectPublisher ${DisCODe_LIBRARIES}
-        ${ROS_LIBRARIES})
+        ${ROS_LIBRARIES} ${catkin_LIBRARIES} ${object_recognition_msgs_LIBRARIES})
 
 INSTALL_COMPONENT(RecognizedObjectPublisher)

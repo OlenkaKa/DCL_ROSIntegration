@@ -19,8 +19,8 @@ find_package(PCL 1.7.2 REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 # # OpenCV library
-# FIND_PACKAGE( OpenCV REQUIRED )
-# SET(DCL_LIBRARIES ${DCL_LIBRARIES} ${OpenCV_LIBS})
+FIND_PACKAGE( OpenCV REQUIRED )
+SET(DCL_LIBRARIES ${DCL_LIBRARIES} ${OpenCV_LIBS})
 
 # Find another DCLs our one depends on
 # Use macro: DISCODE_FIND_DCL(<DCL_NAME>)

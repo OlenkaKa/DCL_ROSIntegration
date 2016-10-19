@@ -76,12 +76,13 @@ protected:
 
     /// Input data streams
     Base::DataStreamIn<Types::HomogMatrix, Base::DataStreamBuffer::Newest, Base::Synchronization::Mutex> in_object_pose_;
+    Base::DataStreamIn<std::string> in_object_name_;
     Base::DataStreamIn<double> in_object_confidence_;
 
     /// Properties
-    Base::Property <std::string> parent_frame_;
-    Base::Property <std::string> ros_node_name_;
-    Base::Property <std::string> ros_topic_name_;
+    Base::Property<std::string> parent_frame_;
+    Base::Property<std::string> ros_node_name_;
+    Base::Property<std::string> ros_topic_name_;
     Base::Property<bool> ros_spin_;
 
     /// ROS
@@ -93,7 +94,7 @@ protected:
 
     /// Others
     void spin();
-    void createMessage(const Types::HomogMatrix &matrix, double confidence, object_recognition_msgs::RecognizedObject &result);
+    void createMessage(const string &name, const Types::HomogMatrix &matrix, double confidence, object_recognition_msgs::RecognizedObject &result);
 };
 
 } //: namespace RecognizedObjectPublisher

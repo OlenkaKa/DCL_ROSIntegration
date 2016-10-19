@@ -31,7 +31,7 @@ RecognizedObjectPublisher::RecognizedObjectPublisher(const std::string &name) :
         parent_frame_("parent.frame", std::string("/discode_camera")),
         ros_node_name_("ros.node", std::string("/discode_recognized_object")),
         ros_topic_name_("ros.topic", std::string("/recognized_object")),
-        ros_spin_("ros.spin", true) {
+        ros_spin_("ros.spin", false) {
     registerProperty(parent_frame_);
     registerProperty(ros_node_name_);
     registerProperty(ros_topic_name_);
@@ -44,6 +44,7 @@ RecognizedObjectPublisher::~RecognizedObjectPublisher() {
 void RecognizedObjectPublisher::prepareInterface() {
     // Register data streams, events and event handlers
     registerStream("in_object_pose", &in_object_pose_);
+    registerStream("in_object_name", &in_object_name_);
     registerStream("in_object_confidence", &in_object_confidence_);
 
     // Register handlers
@@ -52,6 +53,7 @@ void RecognizedObjectPublisher::prepareInterface() {
 
     registerHandler("publishPose", boost::bind(&RecognizedObjectPublisher::publishPose, this));
     addDependency("publishPose", &in_object_pose_);
+    addDependency("publishPose", &in_object_name_);
 //    addDependency("publishPose", &in_object_confidence_);
 }
 
@@ -84,13 +86,15 @@ bool RecognizedObjectPublisher::onStart() {
 void RecognizedObjectPublisher::publishPose() {
     CLOG(LTRACE) << "RecognizedObjectPublisher::publishPose";
     Types::HomogMatrix pose = in_object_pose_.read();
+    string name = in_object_name_.read();
 //    double confidence = in_object_confidence_.read();
     double confidence = 1.0;
 
     object_recognition_msgs::RecognizedObject result_message;
-    createMessage(pose, confidence, result_message);
+    createMessage(name, pose, confidence, result_message);
 
     publisher_.publish(result_message);
+    spin();
 }
 
 void RecognizedObjectPublisher::spin() {
@@ -99,7 +103,8 @@ void RecognizedObjectPublisher::spin() {
     }
 }
 
-void RecognizedObjectPublisher::createMessage(const Types::HomogMatrix &object_pose, double object_confidence,
+void RecognizedObjectPublisher::createMessage(const string &name, const Types::HomogMatrix &object_pose,
+                                              double object_confidence,
                                               object_recognition_msgs::RecognizedObject &message) {
     Eigen::Affine3d affine = object_pose;
     geometry_msgs::Pose pose;
@@ -107,7 +112,6 @@ void RecognizedObjectPublisher::createMessage(const Types::HomogMatrix &object_p
 
     float confidence = (float) object_confidence;
 
-    // TODO prepare result
     std_msgs::Header header;
     header.stamp = ros::Time::now();    // Temporary solution - TODO
     header.frame_id = parent_frame_;
@@ -115,7 +119,7 @@ void RecognizedObjectPublisher::createMessage(const Types::HomogMatrix &object_p
 //    vector<array<double, 36ul> > covariance;    // TODO
 
     message.header = header;
-    message.type.key = "";
+    message.type.key = name;
     message.type.db = "";
     message.confidence = confidence;
     message.pose.header = header;
