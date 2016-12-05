@@ -67,7 +67,9 @@ bool ImageSubscriber::onStart() {
 void ImageSubscriber::onNewImage() {
     ros::spinOnce();
     rate_->sleep();
-    out_img_.write(image_);
+    if (!image_.empty()) {
+        out_img_.write(image_);
+    }
     CLOG(LERROR) << "POSZŁO!";
 }
 
@@ -81,7 +83,7 @@ void ImageSubscriber::handleImage(const sensor_msgs::ImageConstPtr &msg) {
         CLOG(LERROR) << "cv_bridge exception: " << e.what();
         return;
     }
-    image_ = cv_ptr->image;
+    image_ = cv_ptr->image.clone();
 }
 
 //void ImageSubscriber::subscribe() {

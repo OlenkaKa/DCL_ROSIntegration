@@ -7,8 +7,9 @@ include_directories(.)
 # ##############################################################################
 
 # Find Boost, at least ver. 1.41
-find_package(Boost 1.41.0 REQUIRED COMPONENTS system thread filesystem date_time)
+find_package(Boost 1.41.0 REQUIRED COMPONENTS system filesystem date_time)
 include_directories(SYSTEM ${Boost_INCLUDE_DIR})
+#set(Boost_LIBRARIES "${Boost_LIBRARIES} /home/akarbarc/MGR2/libs/boost_1_62_0/inst/lib")
 
 # Set variable with list of all libraries common for this DCL
 set(DCL_LIBRARIES "${DisCODe_LIBRARIES} ${Boost_LIBRARIES}")
@@ -20,6 +21,8 @@ include_directories(${PCL_INCLUDE_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 # # OpenCV library
 FIND_PACKAGE( OpenCV REQUIRED )
+include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
+
 SET(DCL_LIBRARIES ${DCL_LIBRARIES} ${OpenCV_LIBS})
 
 # Find another DCLs our one depends on
