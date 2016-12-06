@@ -54,7 +54,7 @@ void RecognizedObjectPublisher::prepareInterface() {
     registerHandler("publishPose", boost::bind(&RecognizedObjectPublisher::publishPose, this));
     addDependency("publishPose", &in_object_pose_);
     addDependency("publishPose", &in_object_name_);
-//    addDependency("publishPose", &in_object_confidence_);
+    addDependency("publishPose", &in_object_confidence_);
 }
 
 bool RecognizedObjectPublisher::onInit() {
@@ -87,8 +87,7 @@ void RecognizedObjectPublisher::publishPose() {
     CLOG(LTRACE) << "RecognizedObjectPublisher::publishPose";
     Types::HomogMatrix pose = in_object_pose_.read();
     string name = in_object_name_.read();
-//    double confidence = in_object_confidence_.read();
-    double confidence = 1.0;
+    double confidence = in_object_confidence_.read();
 
     object_recognition_msgs::RecognizedObject result_message;
     createMessage(name, pose, confidence, result_message);
@@ -124,6 +123,7 @@ void RecognizedObjectPublisher::createMessage(const string &name, const Types::H
     message.confidence = confidence;
     message.pose.header = header;
     message.pose.pose.pose = pose;
+    // TODO message.bounding_mesh
 //    message.pose.pose.covariance = covariance;
 }
 

@@ -70,11 +70,9 @@ void ImageSubscriber::onNewImage() {
     if (!image_.empty()) {
         out_img_.write(image_);
     }
-    CLOG(LERROR) << "POSZŁO!";
 }
 
 void ImageSubscriber::handleImage(const sensor_msgs::ImageConstPtr &msg) {
-    CLOG(LERROR) << "new msg!";
     cv_bridge::CvImagePtr cv_ptr;
     try {
         cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
