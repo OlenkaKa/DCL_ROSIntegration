@@ -32,7 +32,12 @@ discode_find_dcl(CvCoreTypes)
 discode_find_dcl(CvBasic) # Required for Types/Features.hpp -> TODO!
 
 # Check, whether all necessary libraries are linked
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,defs") 
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,defs")
+
+# Add C++11 support
+if(UNIX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
+endif()
 
 # ##############################################################################
 # Add source directories

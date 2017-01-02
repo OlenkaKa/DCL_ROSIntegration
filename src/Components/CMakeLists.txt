@@ -3,3 +3,5 @@
 ADD_COMPONENT(RecognizedObjectPublisher)
 
 ADD_COMPONENT(ImageSubscriber)
+
+ADD_COMPONENT(RecognizedObjectSubscriber)
