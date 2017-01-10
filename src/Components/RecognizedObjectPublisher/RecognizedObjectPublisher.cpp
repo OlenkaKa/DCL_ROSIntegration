@@ -15,6 +15,8 @@
 #include <pcl/common/transforms.h>
 #include <pcl/PolygonMesh.h>
 
+#include <irp6_grasping_msgs/RecognizedObjectArray.h>
+
 #include <eigen_conversions/eigen_msg.h>
 #include <geometry_msgs/Point.h>
 #include <tf_conversions/tf_eigen.h>
@@ -43,22 +45,33 @@ RecognizedObjectPublisher::~RecognizedObjectPublisher() {
 
 void RecognizedObjectPublisher::prepareInterface() {
     // Register data streams, events and event handlers
-    registerStream("in_object_pose", &in_object_pose_);
     registerStream("in_object_vertices_xyz", &in_object_vertices_xyz_);
     registerStream("in_object_triangles", &in_object_triangles_);
     registerStream("in_object_name", &in_object_name_);
+
+    registerStream("in_object_pose", &in_object_pose_);
     registerStream("in_object_confidence", &in_object_confidence_);
+
+    registerStream("in_object_poses", &in_object_poses_);
+    registerStream("in_object_confidences", &in_object_confidences_);
 
     // Register handlers
     registerHandler("spin", boost::bind(&RecognizedObjectPublisher::spin, this));
     addDependency("spin", NULL);
 
     registerHandler("publishPose", boost::bind(&RecognizedObjectPublisher::publishPose, this));
-    addDependency("publishPose", &in_object_pose_);
     addDependency("publishPose", &in_object_name_);
     addDependency("publishPose", &in_object_vertices_xyz_);
     addDependency("publishPose", &in_object_triangles_);
+    addDependency("publishPose", &in_object_pose_);
     addDependency("publishPose", &in_object_confidence_);
+
+    registerHandler("publishMultiplePoses", boost::bind(&RecognizedObjectPublisher::publishMultiplePoses, this));
+    addDependency("publishMultiplePoses", &in_object_name_);
+    addDependency("publishMultiplePoses", &in_object_vertices_xyz_);
+    addDependency("publishMultiplePoses", &in_object_triangles_);
+    addDependency("publishMultiplePoses", &in_object_poses_);
+    addDependency("publishMultiplePoses", &in_object_confidences_);
 }
 
 bool RecognizedObjectPublisher::onInit() {
@@ -68,6 +81,7 @@ bool RecognizedObjectPublisher::onInit() {
     ros::init(argc, &argv, ros_node_name_, ros::init_options::NoSigintHandler);
     nh_ = new ros::NodeHandle;
     publisher_ = nh_->advertise<object_recognition_msgs::RecognizedObject>(ros_topic_name_, 1000);
+    multiple_publisher_ = nh_->advertise<irp6_grasping_msgs::RecognizedObjectArray>(string(ros_topic_name_) + "_array", 1000);
     return true;
 }
 
@@ -100,6 +114,29 @@ void RecognizedObjectPublisher::publishPose() {
 
     publisher_.publish(result_message);
     spin();
+}
+
+void RecognizedObjectPublisher::publishMultiplePoses() {
+    CLOG(LTRACE) << "RecognizedObjectPublisher::publishMultiplePoses";
+    string name = in_object_name_.read();
+    pcl::PointCloud<pcl::PointXYZ>::Ptr vertices = in_object_vertices_xyz_.read()[0];
+    vector<pcl::Vertices> triangles = in_object_triangles_.read()[0];
+
+    vector<Types::HomogMatrix> pose = in_object_poses_.read();
+    vector<double> confidence = in_object_confidences_.read();
+
+    irp6_grasping_msgs::RecognizedObjectArray result_message;
+
+    for (int i = 0; i < pose.size(); ++i) {
+        object_recognition_msgs::RecognizedObject recognized_object;
+        createMessage(name, pose[i], vertices, triangles, confidence[i], recognized_object);
+        result_message.objects.push_back(recognized_object);
+    }
+
+//    if (result_message.objects.size() > 0) {
+        multiple_publisher_.publish(result_message);
+        spin();
+//    }
 }
 
 void RecognizedObjectPublisher::spin() {

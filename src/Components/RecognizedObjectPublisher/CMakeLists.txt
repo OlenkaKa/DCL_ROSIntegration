@@ -27,12 +27,13 @@ function(USE_ROS)
     set(ROS_LIBRARIES ${ROS_LIBRARIES} ${INT_ROS_LIBRARIES} PARENT_SCOPE)
 endfunction()
 
-USE_ROS(object_recognition_msgs roscpp std_msgs tf geometry_msgs tf_conversions object_recognition_msgs eigen_conversions)
+USE_ROS(object_recognition_msgs roscpp std_msgs tf geometry_msgs tf_conversions object_recognition_msgs eigen_conversions irp6_grasping_msgs)
 
 find_package(catkin REQUIRED COMPONENTS
         roscpp
         object_recognition_msgs
         tf
+        irp6_grasping_msgs
         )
 include_directories(${catkin_INCLUDE_DIRS})
 # Create a variable containing all .cpp files:

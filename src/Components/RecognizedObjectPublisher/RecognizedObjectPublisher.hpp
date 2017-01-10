@@ -75,12 +75,15 @@ protected:
 
 
     /// Input data streams
-    Base::DataStreamIn<Types::HomogMatrix, Base::DataStreamBuffer::Newest, Base::Synchronization::Mutex> in_object_pose_;
     Base::DataStreamIn<std::string, Base::DataStreamBuffer::Newest, Base::Synchronization::Mutex> in_object_name_;
     Base::DataStreamIn<std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr>, Base::DataStreamBuffer::Newest, Base::Synchronization::Mutex> in_object_vertices_xyz_;
     Base::DataStreamIn<std::vector<std::vector<pcl::Vertices> >, Base::DataStreamBuffer::Newest, Base::Synchronization::Mutex> in_object_triangles_;
 
+    Base::DataStreamIn<Types::HomogMatrix, Base::DataStreamBuffer::Newest, Base::Synchronization::Mutex> in_object_pose_;
     Base::DataStreamIn<double, Base::DataStreamBuffer::Newest, Base::Synchronization::Mutex> in_object_confidence_;
+
+    Base::DataStreamIn<std::vector<Types::HomogMatrix>, Base::DataStreamBuffer::Newest, Base::Synchronization::Mutex> in_object_poses_;
+    Base::DataStreamIn<std::vector<double>, Base::DataStreamBuffer::Newest, Base::Synchronization::Mutex> in_object_confidences_;
 
     /// Properties
     Base::Property<std::string> parent_frame_;
@@ -91,9 +94,11 @@ protected:
     /// ROS
     ros::NodeHandle *nh_;
     ros::Publisher publisher_;
+    ros::Publisher multiple_publisher_;
 
     /// Handlers
     void publishPose();
+    void publishMultiplePoses();
 
     /// Others
     void spin();
