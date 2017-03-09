@@ -10,7 +10,6 @@
 #include "RecognizedObjectSubscriber.hpp"
 #include "Common/Logger.hpp"
 #include "Types/HomogMatrix.hpp"
-#include "../../../../CvCoreTypes/src/Types/HomogMatrix.hpp"
 
 #include <tf/transform_listener.h>
 #include <tf/transform_broadcaster.h>
@@ -96,7 +95,7 @@ void RecognizedObjectSubscriber::handleMessage(const object_recognition_msgs::Re
 
     try {
         tf_listener.lookupTransform(parent_frame_, msg->pose.header.frame_id,
-                                    msg->pose.header.stamp, end_tf);
+                                    /* msg->pose.header.stamp */ ros::Time(0), end_tf);
 
         tf::poseMsgToTF(msg->pose.pose.pose, start_tf);
         tf::Transform start_end_tf = end_tf * start_tf;
