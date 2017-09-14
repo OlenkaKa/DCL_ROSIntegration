@@ -120,10 +120,8 @@ void RecognizedObjectPublisher::createMessage(const string &object_label, const 
     float confidence = (float) object_confidence;
 
     std_msgs::Header header;
-    header.stamp = ros::Time::now();    // Temporary solution - TODO
+    header.stamp = ros::Time::now();
     header.frame_id = parent_frame_;
-
-//    vector<array<double, 36ul> > covariance;    // TODO
 
     message.header = header;
     message.type.key = object_label;
@@ -146,7 +144,6 @@ void RecognizedObjectPublisher::createMessage(const string &object_label, const 
         mt.vertex_indices[2] = triangle.vertices[2];
         message.bounding_mesh.triangles.push_back(mt);
     }
-//    message.pose.pose.covariance = covariance;
 }
 
 } //: namespace RecognizedObjectPublisher

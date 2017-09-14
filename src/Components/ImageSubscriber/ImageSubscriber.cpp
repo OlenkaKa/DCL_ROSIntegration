@@ -43,13 +43,10 @@ bool ImageSubscriber::onInit() {
     CLOG(LERROR) <<"Start! " << ros_topic_;
     image_sub_ = it_->subscribe(ros_topic_, 1, &ImageSubscriber::handleImage, this);
     rate_ = new ros::Rate(10.0);
-//    subscribe_thread_ = new boost::thread(boost::bind(&ImageSubscriber::subscribe, this));
-//    subscribe_thread_->join();
     return true;
 }
 
 bool ImageSubscriber::onFinish() {
-//    delete subscribe_thread_;
     delete rate_;
     delete it_;
     delete nh_;
@@ -83,13 +80,6 @@ void ImageSubscriber::handleImage(const sensor_msgs::ImageConstPtr &msg) {
     }
     image_ = cv_ptr->image.clone();
 }
-
-//void ImageSubscriber::subscribe() {
-//    while (nh_->ok()){
-//        ros::spinOnce();
-//        rate_->sleep();
-//    }
-//}
 
 } //: namespace ImageSubscriber
 } //: namespace Processors

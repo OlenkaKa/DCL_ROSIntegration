@@ -78,16 +78,6 @@ void RecognizedObjectSubscriber::onNewMessage() {
     out_homog_matrix_.write(homog_matrix_);
 }
 
-//geometry_msgs::Pose transformPose(const geometry_msgs::Pose &start_pose, const tf::StampedTransform &end_tf) {
-//    tf::Transform start_tf;
-//    tf::poseMsgToTF(start_pose, start_tf);
-//    tf::Transform start_end_tf = end_tf * start_tf;
-//
-//    geometry_msgs::Pose transformed_pose;
-//    tf::poseTFToMsg(start_end_tf, transformed_pose);
-//    return transformed_pose;
-//}
-
 void RecognizedObjectSubscriber::handleMessage(const object_recognition_msgs::RecognizedObjectConstPtr &msg) {
     static tf::TransformListener tf_listener;
     static tf::Transform start_tf;
@@ -95,7 +85,7 @@ void RecognizedObjectSubscriber::handleMessage(const object_recognition_msgs::Re
 
     try {
         tf_listener.lookupTransform(parent_frame_, msg->pose.header.frame_id,
-                                    /* msg->pose.header.stamp */ ros::Time(0), end_tf);
+                                    msg->pose.header.stamp, end_tf);
 
         tf::poseMsgToTF(msg->pose.pose.pose, start_tf);
         tf::Transform start_end_tf = end_tf * start_tf;
@@ -103,11 +93,6 @@ void RecognizedObjectSubscriber::handleMessage(const object_recognition_msgs::Re
         Eigen::Affine3d affine;
         tf::poseTFToEigen(start_end_tf, affine);
 
-
-//        geometry_msgs::Pose transformed_pose = transformPose(msg->pose.pose.pose, world_sensor_tf);
-//
-//        Eigen::Affine3d affine;
-//        tf::poseMsgToEigen(transformed_pose, affine);
         homog_matrix_ = Types::HomogMatrix(affine);
     } catch (tf::TransformException &e) {
         CLOG(LWARNING) << e.what() << '\n' << parent_frame_;

@@ -27,7 +27,6 @@ namespace RecognizedObjectSubscriber {
  * \class RecognizedObjectSubscriber
  * \brief RecognizedObjectSubscriber processor class.
  *
- * 
  */
 class RecognizedObjectSubscriber : public Base::Component {
 public:

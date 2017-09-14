@@ -30,7 +30,6 @@ namespace RecognizedObjectPublisher {
  * \class RecognizedObjectPublisher
  * \brief RecognizedObjectPublisher processor class.
  *
- * Description TODO
  */
 class RecognizedObjectPublisher : public Base::Component {
 public:

@@ -14,7 +14,6 @@
 #include "EventHandler2.hpp"
 
 #include <opencv2/opencv.hpp>
-//#include <boost/thread.hpp>
 
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
@@ -28,7 +27,6 @@ namespace ImageSubscriber {
  * \class ImageSubscriber
  * \brief ImageSubscriber processor class.
  *
- * 
  */
 class ImageSubscriber : public Base::Component {
 public:
@@ -89,14 +87,9 @@ protected:
 
     cv::Mat image_;
 
-//    boost::thread *subscribe_thread_;
-
-
     // Handlers
     void onNewImage();
     void handleImage(const sensor_msgs::ImageConstPtr& msg);
-
-//    void subscribe();
 
 };
 
